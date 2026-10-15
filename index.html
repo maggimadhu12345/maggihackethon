@@ -1,0 +1,670 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmAgent | Document Intelligence</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #0b1020;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 7%;
+            border-bottom: 1px solid #263047;
+            background: #10172a;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .logo span {
+            color: white;
+        }
+
+        .status {
+            color: #86efac;
+            font-size: 13px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 55px 20px 35px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid #334155;
+            border-radius: 25px;
+            color: #93c5fd;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 5vw, 48px);
+            margin-bottom: 18px;
+        }
+
+        .hero h1 span {
+            color: #60a5fa;
+        }
+
+        .hero p {
+            color: #94a3b8;
+            max-width: 650px;
+            margin: auto;
+            line-height: 1.8;
+        }
+
+        .container {
+            width: 86%;
+            max-width: 1150px;
+            margin: 20px auto 60px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: #131c30;
+            border: 1px solid #29364e;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 22px;
+            line-height: 1.6;
+        }
+
+        .upload-area {
+            border: 2px dashed #3b82f6;
+            border-radius: 14px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            background: #17243b;
+            transition: 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #1d2e4b;
+        }
+
+        .upload-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .upload-area h3 {
+            margin-bottom: 10px;
+        }
+
+        .upload-area p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        #preview {
+            display: none;
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin: 22px 0 10px;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #334155;
+            border-radius: 9px;
+            background: #0b1222;
+            color: white;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 95px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 9px;
+            background: #3b82f6;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            background: #24324b;
+            margin-top: 12px;
+        }
+
+        .secondary-btn:hover {
+            background: #334155;
+        }
+
+        .worker {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 15px;
+            background: #0d1628;
+            border: 1px solid #26364e;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+
+        .worker-icon {
+            font-size: 25px;
+        }
+
+        .worker-info h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .worker-info p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .worker-status {
+            margin-left: auto;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .result-box {
+            background: #080e1b;
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid #26364e;
+            min-height: 150px;
+            overflow-x: auto;
+        }
+
+        pre {
+            color: #a7f3d0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .feature {
+            padding: 22px;
+            background: #131c30;
+            border: 1px solid #29364e;
+            border-radius: 14px;
+        }
+
+        .feature div {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .feature h3 {
+            font-size: 15px;
+            margin-bottom: 9px;
+        }
+
+        .feature p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            border-top: 1px solid #263047;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 92%;
+            }
+
+            .navbar {
+                padding: 18px 5%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">🤖 Om<span>Agent</span></div>
+        <div class="status">● Frontend Demo</div>
+    </nav>
+
+    <header class="hero">
+        <div class="badge">AI-POWERED DOCUMENT INTELLIGENCE</div>
+
+        <h1>Transform Images Into <span>Insights</span></h1>
+
+        <p>
+            Upload an image or document to explore text extraction,
+            object detection, and AI-powered image understanding
+            through a unified dashboard.
+        </p>
+    </header>
+
+    <main class="container">
+
+        <div class="grid">
+
+            <!-- Image Upload Section -->
+            <section class="card">
+                <h2>📤 Upload Your Image</h2>
+
+                <p class="subtitle">
+                    Upload an invoice, receipt, document, or image
+                    for analysis.
+                </p>
+
+                <label for="imageInput" class="upload-area">
+                    <div class="upload-icon">📄</div>
+
+                    <h3 id="uploadTitle">Choose an image to upload</h3>
+
+                    <p id="uploadText">
+                        Click here to select PNG, JPG, or JPEG
+                    </p>
+
+                    <img id="preview" alt="Selected image preview">
+                </label>
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/png,image/jpeg,image/jpg"
+                >
+
+                <label for="task">Select Analysis Task</label>
+
+                <select id="task">
+                    <option value="all">Complete Image Analysis</option>
+                    <option value="ocr">Extract All Text (OCR)</option>
+                    <option value="document">Analyze Document</option>
+                    <option value="objects">Detect Objects</option>
+                    <option value="caption">Describe Image</option>
+                </select>
+
+                <label for="prompt">Your Question</label>
+
+                <textarea
+                    id="prompt"
+                    placeholder="Example: Extract the invoice number, date, and total amount."
+                ></textarea>
+
+                <button class="btn" id="analyzeBtn" onclick="analyzeImage()">
+                    ✨ Analyze Image
+                </button>
+
+                <button
+                    class="btn secondary-btn"
+                    onclick="resetForm()"
+                >
+                    Clear & Reset
+                </button>
+            </section>
+
+            <!-- Worker Status Section -->
+            <section class="card">
+                <h2>🧠 AI Worker Pipeline</h2>
+
+                <p class="subtitle">
+                    Specialized components used in the document
+                    intelligence workflow.
+                </p>
+
+                <div class="worker">
+                    <div class="worker-icon">📥</div>
+                    <div class="worker-info">
+                        <h3>ImageLoader</h3>
+                        <p>Receives and validates images</p>
+                    </div>
+                    <div class="worker-status" id="s1">Waiting</div>
+                </div>
+
+                <div class="worker">
+                    <div class="worker-icon">🧠</div>
+                    <div class="worker-info">
+                        <h3>Planner Worker</h3>
+                        <p>Chooses the required analysis tasks</p>
+                    </div>
+                    <div class="worker-status" id="s2">Waiting</div>
+                </div>
+
+                <div class="worker">
+                    <div class="worker-icon">🔤</div>
+                    <div class="worker-info">
+                        <h3>OCR Worker</h3>
+                        <p>Extracts text from images</p>
+                    </div>
+                    <div class="worker-status" id="s3">Waiting</div>
+                </div>
+
+                <div class="worker">
+                    <div class="worker-icon">🎯</div>
+                    <div class="worker-info">
+                        <h3>Detector Worker</h3>
+                        <p>Identifies objects in images</p>
+                    </div>
+                    <div class="worker-status" id="s4">Waiting</div>
+                </div>
+
+                <div class="worker">
+                    <div class="worker-icon">🖼️</div>
+                    <div class="worker-info">
+                        <h3>Caption Worker</h3>
+                        <p>Describes visual content</p>
+                    </div>
+                    <div class="worker-status" id="s5">Waiting</div>
+                </div>
+
+                <div class="worker">
+                    <div class="worker-icon">📊</div>
+                    <div class="worker-info">
+                        <h3>Reasoning Worker</h3>
+                        <p>Combines analysis results</p>
+                    </div>
+                    <div class="worker-status" id="s6">Waiting</div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Output Section -->
+        <section class="card">
+            <h2>📋 Analysis Results</h2>
+
+            <p class="subtitle" id="resultMessage">
+                Your analysis output will appear here after connecting
+                the frontend to the Python backend.
+            </p>
+
+            <div class="result-box">
+                <pre id="result">{
+  "status": "waiting",
+  "message": "Upload an image to get started."
+}</pre>
+            </div>
+
+            <button
+                class="btn"
+                style="max-width: 250px;"
+                onclick="downloadJSON()"
+            >
+                📥 Download JSON
+            </button>
+        </section>
+
+        <!-- Features Section -->
+        <section class="card">
+            <h2>⚡ Core Capabilities</h2>
+
+            <p class="subtitle">
+                Multiple computer vision capabilities in one application.
+            </p>
+
+            <div class="features">
+
+                <div class="feature">
+                    <div>🔤</div>
+                    <h3>Text Recognition</h3>
+                    <p>
+                        Extract readable text from documents using OCR.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div>🎯</div>
+                    <h3>Object Detection</h3>
+                    <p>
+                        Identify supported objects and their locations.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div>🖼️</div>
+                    <h3>Image Understanding</h3>
+                    <p>
+                        Generate descriptions of image content.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        OmAgent — Multi-Worker Image Processing & Document Intelligence
+    </footer>
+
+    <script>
+        const imageInput = document.getElementById("imageInput");
+        const preview = document.getElementById("preview");
+        const uploadTitle = document.getElementById("uploadTitle");
+        const uploadText = document.getElementById("uploadText");
+
+        let selectedImage = null;
+        let currentResult = {
+            status: "waiting",
+            message: "Upload an image to get started."
+        };
+
+        imageInput.addEventListener("change", function () {
+            const file = this.files[0];
+
+            if (!file) return;
+
+            if (!file.type.startsWith("image/")) {
+                alert("Please select a valid image file.");
+                this.value = "";
+                return;
+            }
+
+            selectedImage = file;
+
+            const imageURL = URL.createObjectURL(file);
+
+            preview.src = imageURL;
+            preview.style.display = "block";
+
+            uploadTitle.textContent = file.name;
+            uploadText.textContent =
+                "Image selected successfully. Click Analyze Image to continue.";
+        });
+
+        function setWorkerStatus(id, message) {
+            document.getElementById(id).textContent = message;
+        }
+
+        async function analyzeImage() {
+            if (!selectedImage) {
+                alert("Please upload an image first.");
+                return;
+            }
+
+            const button = document.getElementById("analyzeBtn");
+            const result = document.getElementById("result");
+            const task = document.getElementById("task").value;
+            const prompt = document.getElementById("prompt").value;
+
+            button.disabled = true;
+            button.textContent = "Processing...";
+
+            ["s1", "s2", "s3", "s4", "s5", "s6"].forEach(id => {
+                setWorkerStatus(id, "Waiting");
+            });
+
+            setWorkerStatus("s1", "Selected");
+            setWorkerStatus("s2", "Demo");
+
+            /*
+              FRONTEND DEMO ONLY.
+
+              This code does not call the OmAgent backend.
+              Connect your actual Python API here to perform
+              OCR, object detection, captioning, and reasoning.
+            */
+
+            currentResult = {
+                status: "frontend_demo",
+                file_name: selectedImage.name,
+                file_type: selectedImage.type,
+                file_size_bytes: selectedImage.size,
+                selected_task: task,
+                user_question: prompt,
+                message: "Image selected successfully. The backend is not connected, so no AI analysis has been performed.",
+                extracted_text: null,
+                detected_objects: null,
+                image_caption: null
+            };
+
+            result.textContent = JSON.stringify(currentResult, null, 2);
+
+            document.getElementById("resultMessage").textContent =
+                "Frontend demo completed. Connect the Python backend to get actual analysis results.";
+
+            ["s1", "s2", "s3", "s4", "s5", "s6"].forEach(id => {
+                setWorkerStatus(id, "Not connected");
+            });
+
+            button.disabled = false;
+            button.textContent = "✨ Analyze Image";
+        }
+
+        function downloadJSON() {
+            const blob = new Blob(
+                [JSON.stringify(currentResult, null, 2)],
+                { type: "application/json" }
+            );
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = "omagent_result.json";
+            link.click();
+
+            URL.revokeObjectURL(url);
+        }
+
+        function resetForm() {
+            imageInput.value = "";
+            selectedImage = null;
+
+            preview.src = "";
+            preview.style.display = "none";
+
+            uploadTitle.textContent = "Choose an image to upload";
+            uploadText.textContent = "Click here to select PNG, JPG, or JPEG";
+
+            document.getElementById("task").value = "all";
+            document.getElementById("prompt").value = "";
+
+            document.getElementById("resultMessage").textContent =
+                "Your analysis output will appear here after connecting the frontend to the Python backend.";
+
+            currentResult = {
+                status: "waiting",
+                message: "Upload an image to get started."
+            };
+
+            document.getElementById("result").textContent =
+                JSON.stringify(currentResult, null, 2);
+
+            ["s1", "s2", "s3", "s4", "s5", "s6"].forEach(id => {
+                setWorkerStatus(id, "Waiting");
+            });
+        }
+    </script>
+
+</body>
+</html>
+```
